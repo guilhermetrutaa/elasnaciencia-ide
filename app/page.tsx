@@ -267,7 +267,7 @@ function IDEContent() {
               <textarea 
                 value={stdin}
                 onChange={(e) => setStdin(e.target.value)}
-                placeholder="Ex: João&#10;25&#10;senha123"
+                placeholder="Ex: Mirna&#10;25&#10;senha123"
                 className="w-full bg-[#1a1a1b] text-green-400 font-mono text-xs p-3 border-none focus:outline-none focus:ring-2 focus:ring-purple-600 resize-none"
                 style={{ minHeight: '70px', maxHeight: '100px' }}
               />
