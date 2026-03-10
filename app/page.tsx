@@ -16,7 +16,7 @@ interface JavaFile {
 const DEFAULT_CODE = [
   { 
     name: 'Main.java', 
-    content: 'import java.util.*;\n\npublic class Main {\n  public static void main(String[] args) {\n    System.out.println("Olá");\n    ArrayList<String> lista = new ArrayList<>();\n    lista.add("IDE ElasNaCiência pronta!");\n    System.out.println(lista.get(0));\n  }\n}' 
+    content: 'import java.util.Scanner;\n\npublic class Main {\n  public static void main(String[] args) {\n    Scanner scanner = new Scanner(System.in);\n\n    System.out.print("Digite seu nome: ");\n    String nome = scanner.nextLine();\n\n    System.out.print("Digite sua idade: ");\n    String idadeStr = scanner.nextLine();\n    int idade = Integer.parseInt(idadeStr);\n\n    System.out.println("Olá, " + nome + "! Você tem " + idade + " anos.");\n\n    scanner.close();\n  }\n}' 
   }
 ];
 
@@ -26,16 +26,14 @@ function IDEContent() {
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
-  // Controle crucial para evitar sobrescrita no F5
+  const [stdin, setStdin] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
   
   const searchParams = useSearchParams();
   const snippetId = searchParams.get('id');
 
-  // 1. CARREGAR DADOS (Supabase ou LocalStorage)
   useEffect(() => {
     const loadData = async () => {
-      // Prioridade 1: Link compartilhado (ID na URL)
       if (snippetId) {
         const { data } = await supabase
           .from('snippets')
@@ -55,7 +53,6 @@ function IDEContent() {
         }
       }
 
-      // Prioridade 2: Cache local do navegador
       const savedFiles = localStorage.getItem('elasnaciencia_code');
       if (savedFiles) {
         try {
@@ -70,7 +67,6 @@ function IDEContent() {
     loadData();
   }, [snippetId]);
 
-  // 2. AUTO-SAVE LOCAL (Só roda DEPOIS que o carregamento inicial terminou)
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem('elasnaciencia_code', JSON.stringify(files));
@@ -83,7 +79,6 @@ function IDEContent() {
       let className = name.replace('.java', '').trim();
       if (className.length === 0) return;
       
-      // Garante primeira letra maiúscula (padrão Java)
       className = className.charAt(0).toUpperCase() + className.slice(1);
       const formattedName = className + '.java';
       
@@ -119,7 +114,6 @@ function IDEContent() {
     setOutput("Compilando e executando...");
 
     try {
-      // Executar apenas o arquivo ativo (o que está sendo editado)
       const activeFile = files[activeFileIndex];
       if (!activeFile) {
         setOutput("Erro: Nenhum arquivo selecionado.");
@@ -130,7 +124,10 @@ function IDEContent() {
       const response = await fetch("/api/execute", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ files: [activeFile] }), 
+        body: JSON.stringify({ 
+          files: [activeFile],
+          stdin: stdin
+        }), 
       });
 
       const data = await response.json();
@@ -196,10 +193,9 @@ function IDEContent() {
       </header>
       
       <main className="flex-1 flex overflow-hidden">
-        {/* BARRA LATERAL DE ARQUIVOS */}
         <div className="w-56 bg-gradient-to-b from-[#1a1a1b] to-[#252526] border-r-2 border-purple-900/30 flex flex-col">
           <div className="p-3 flex justify-between items-center border-b-2 border-purple-900/50 text-[10px] font-bold text-purple-300 uppercase tracking-widest bg-gradient-to-r from-purple-900/20 to-transparent">
-            📁 Gerenciador de Arquivos
+            Gerenciador de Arquivos
             <button onClick={addNewFile} title="Novo arquivo Java" className="hover:text-white p-1.5 bg-purple-700/50 hover:bg-purple-600 rounded-md transition-all text-white transform hover:scale-110 shadow-lg">
               <Plus className="w-4 h-4" />
             </button>
@@ -223,7 +219,6 @@ function IDEContent() {
           </div>
         </div>
 
-        {/* EDITOR DE CÓDIGO */}
         <div className="flex-1 border-r-2 border-purple-900/30 relative bg-gradient-to-br from-[#1e1e1e] to-[#252526]">
           <div className="absolute top-0 left-0 bg-gradient-to-r from-purple-900/40 to-transparent px-4 py-2 text-[11px] text-purple-300 z-10 border-b-2 border-r-2 border-purple-900/50 font-bold uppercase tracking-wider">
             ⚙️ {files[activeFileIndex]?.name}
@@ -260,30 +255,48 @@ function IDEContent() {
           `}</style>
         </div>
 
-        {/* CONSOLE DE SAÍDA */}
         <div className="w-96 flex flex-col bg-gradient-to-b from-[#0a0a0b] to-[#1a1a1b] border-l-2 border-purple-900/30">
-          <div className="p-3 bg-gradient-to-r from-purple-900/40 via-purple-900/20 to-transparent text-[11px] font-bold text-purple-300 border-b-2 border-purple-900/50 uppercase tracking-wider flex items-center gap-2">
-            <span className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></span>
-            Terminal / Output
-          </div>
-          <div className="p-4 font-mono text-sm overflow-y-auto flex-1 leading-relaxed scrollbar-thin scrollbar-thumb-purple-700 scrollbar-track-transparent">
-            {output ? (
-              <pre className="whitespace-pre-wrap text-green-400 drop-shadow-md" style={{
-                textShadow: '0 0 10px rgba(74, 222, 128, 0.3)'
-              }}>
-                {output.split('\n').map((line, i) => (
-                  <div key={i} className="hover:bg-purple-900/20 px-2 rounded transition-colors">
-                    <span className="text-purple-400 mr-2">{'>'}</span>
-                    {line}
-                  </div>
-                ))}
-              </pre>
-            ) : (
-              <div className="text-gray-500 italic opacity-40 font-sans tracking-normal">
-                <div className="mb-2">💜 Pronto para executar seu código!</div>
-                <div className="text-[10px] opacity-60">Clique em "RODAR CÓDIGO" para ver o resultado aqui...</div>
+          <div className="flex h-full flex-col">
+            <div className="border-b-2 border-purple-900/50 bg-[#0f0f10]">
+              <div className="p-3 bg-gradient-to-r from-purple-900/60 via-purple-900/40 to-transparent text-[11px] font-bold text-purple-300 uppercase tracking-wider flex items-center gap-2">
+                ⌨Entrada do Programa
               </div>
-            )}
+              <div className="px-3 py-2 text-[10px] text-yellow-300 bg-yellow-900/10 border-b border-yellow-900/30">
+                Se seu programa pede entrada (Scanner.nextLine()), escreva aqui antes de clicar em RODAR (cada linha = uma entrada)
+              </div>
+              <textarea 
+                value={stdin}
+                onChange={(e) => setStdin(e.target.value)}
+                placeholder="Ex: João&#10;25&#10;senha123"
+                className="w-full bg-[#1a1a1b] text-green-400 font-mono text-xs p-3 border-none focus:outline-none focus:ring-2 focus:ring-purple-600 resize-none"
+                style={{ minHeight: '70px', maxHeight: '100px' }}
+              />
+            </div>
+
+            <div className="flex-1 flex flex-col">
+              <div className="p-3 bg-gradient-to-r from-purple-900/40 via-purple-900/20 to-transparent text-[11px] font-bold text-purple-300 border-b-2 border-purple-900/50 uppercase tracking-wider flex items-center gap-2">
+                Saída do Programa
+              </div>
+              <div className="p-4 font-mono text-sm overflow-y-auto flex-1 leading-relaxed scrollbar-thin scrollbar-thumb-purple-700 scrollbar-track-transparent">
+                {output ? (
+                  <pre className="whitespace-pre-wrap text-green-400 drop-shadow-md" style={{
+                    textShadow: '0 0 10px rgba(74, 222, 128, 0.3)'
+                  }}>
+                    {output.split('\n').map((line, i) => (
+                      <div key={i} className="hover:bg-purple-900/20 px-2 rounded transition-colors">
+                        <span className="text-purple-400 mr-2">{'>'}</span>
+                        {line}
+                      </div>
+                    ))}
+                  </pre>
+                ) : (
+                  <div className="text-gray-500 italic opacity-40 font-sans tracking-normal">
+                    <div className="mb-2">💜 Pronto para executar seu código!</div>
+                    <div className="text-[10px] opacity-60">Clique em "RODAR CÓDIGO" para ver o resultado aqui...</div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </main>

@@ -15,18 +15,21 @@ export async function POST(request: Request) {
           name: f.name,
           content: f.content,
         })),
+        stdin: body.stdin || "",
       }),
     });
 
     const data = await response.json();
 
-    // Combinamos stdout e stderr para garantir que erros apareçam no console
+    // Glot.io retorna stdout, stderr e compile_output
+    const output = (data.compile?.output || "") + (data.stdout || "") + (data.stderr || "") || data.error || "";
+    
     return NextResponse.json({
       run: {
-        output: (data.stdout || "") + (data.stderr || "") || (data.error || "")
+        output: output || "Código executado com sucesso."
       }
     });
   } catch (error) {
-    return NextResponse.json({ error: "Erro na conexão com Glot" }, { status: 500 });
+    return NextResponse.json({ error: "Erro na conexão com Glot.io" }, { status: 500 });
   }
 }
