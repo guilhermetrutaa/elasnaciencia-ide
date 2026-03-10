@@ -184,11 +184,11 @@ function IDEContent() {
           <h1 className="text-[2.2rem] font-black tracking-wider text-white drop-shadow-lg" style={{textShadow: '0 0 20px rgba(139, 63, 163, 0.8)'}}>ElasNaCiência IDE</h1>
         </div>
         <div className="flex gap-3">
-          <button onClick={shareCode} disabled={isSharing} className="flex items-center gap-2 bg-purple-700 hover:bg-purple-600 px-4 py-2 rounded-lg text-sm font-semibold transition-all disabled:opacity-50 border border-purple-500 shadow-lg hover:shadow-purple-600/50 hover:shadow-xl">
+          <button onClick={shareCode} disabled={isSharing} className="flex items-center gap-2 bg-purple-700 px-4 py-2 rounded-lg text-sm font-semibold transition-all disabled:opacity-50">
             {isSharing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
             Salvar e Gerar Link
           </button>
-          <button onClick={runCode} disabled={isRunning} className="flex items-center gap-2 bg-gradient-to-r from-[#00d084] to-[#00b366] hover:from-[#00e894] hover:to-[#00c478] px-5 py-2 rounded-lg text-sm font-bold transition-all disabled:opacity-50 shadow-lg hover:shadow-green-600/50 hover:shadow-xl">
+          <button onClick={runCode} disabled={isRunning} className="flex items-center gap-2 bg-gradient-to-r from-[#d000cd] to-[#b3009b] px-5 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50">
             {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4 fill-current" />}
             RODAR CÓDIGO
           </button>
