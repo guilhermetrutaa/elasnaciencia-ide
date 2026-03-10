@@ -16,7 +16,7 @@ interface JavaFile {
 const DEFAULT_CODE = [
   { 
     name: 'Main.java', 
-    content: 'import java.util.*;\n\npublic class Main {\n  public static void main(String[] args) {\n    System.out.println("Olá mundo!");\n    ArrayList<String> lista = new ArrayList<>();\n    lista.add("IDE ElasNaCiência pronta!");\n    System.out.println(lista.get(0));\n  }\n}' 
+    content: 'import java.util.*;\n\npublic class Main {\n  public static void main(String[] args) {\n    System.out.println("Olá");\n    ArrayList<String> lista = new ArrayList<>();\n    lista.add("IDE ElasNaCiência pronta!");\n    System.out.println(lista.get(0));\n  }\n}' 
   }
 ];
 
@@ -89,7 +89,7 @@ function IDEContent() {
       
       const newFile = { 
         name: formattedName, 
-        content: `public class ${className} {\n  public void saudacao() {\n    System.out.println("Olá da classe ${className}!");\n  }\n}` 
+        content: `import java.util.*;\n\npublic class ${className} {\n  public static void main(String[] args) {\n    System.out.println("Olá");\n    ArrayList<String> lista = new ArrayList<>();\n    lista.add("Classe ${className} pronta!");\n    System.out.println(lista.get(0));\n  }\n}` 
       };
       
       setFiles(prev => [...prev, newFile]);
@@ -119,11 +119,18 @@ function IDEContent() {
     setOutput("Compilando e executando...");
 
     try {
-      // Enviamos TODOS os arquivos para que um possa chamar o outro
+      // Executar apenas o arquivo ativo (o que está sendo editado)
+      const activeFile = files[activeFileIndex];
+      if (!activeFile) {
+        setOutput("Erro: Nenhum arquivo selecionado.");
+        setIsRunning(false);
+        return;
+      }
+
       const response = await fetch("/api/execute", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ files }), 
+        body: JSON.stringify({ files: [activeFile] }), 
       });
 
       const data = await response.json();
