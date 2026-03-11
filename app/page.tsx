@@ -26,11 +26,13 @@ function IDEContent() {
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
-  const [stdin, setStdin] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
   
   const searchParams = useSearchParams();
   const snippetId = searchParams.get('id');
+
+  // Regex para encontrar chamadas de métodos de entrada do Scanner
+  const INPUT_PATTERN = /\bnext(Line|Int|Double|Float|Long|Short|Byte|Boolean)\s*\(/g;
 
   useEffect(() => {
     const loadData = async () => {
@@ -109,9 +111,28 @@ function IDEContent() {
     });
   };
 
+  // Coleta as entradas necessárias via prompt, baseado no código
+  const collectInputsFromCode = (code: string): string[] | null => {
+    const matches = [...code.matchAll(INPUT_PATTERN)];
+    if (matches.length === 0) return []; // nenhuma entrada necessária
+
+    const inputs: string[] = [];
+    for (let i = 0; i < matches.length; i++) {
+      const method = matches[i][0]; // ex: nextLine, nextInt
+      const userInput = prompt(`Digite o valor para a ${i + 1}ª entrada (${method}):`);
+      
+      if (userInput === null) {
+        alert("Execução cancelada.");
+        return null; // usuário cancelou
+      }
+      inputs.push(userInput);
+    }
+    return inputs;
+  };
+
   const runCode = async () => {
     setIsRunning(true);
-    setOutput("Compilando e executando...");
+    setOutput("Preparando execução...");
 
     try {
       const activeFile = files[activeFileIndex];
@@ -120,6 +141,20 @@ function IDEContent() {
         setIsRunning(false);
         return;
       }
+
+      // Coleta as entradas baseadas no código
+      const inputs = collectInputsFromCode(activeFile.content);
+      if (inputs === null) {
+        // Usuário cancelou, interrompe execução
+        setIsRunning(false);
+        setOutput("");
+        return;
+      }
+
+      // Constrói o stdin com as entradas coletadas (cada linha uma entrada)
+      const stdin = inputs.join('\n');
+
+      setOutput("Compilando e executando...");
 
       const response = await fetch("/api/execute", {
         method: "POST",
@@ -255,24 +290,9 @@ function IDEContent() {
           `}</style>
         </div>
 
+        {/* Painel de saída - removida a área de entrada */}
         <div className="w-96 flex flex-col bg-gradient-to-b from-[#0a0a0b] to-[#1a1a1b] border-l-2 border-purple-900/30">
           <div className="flex h-full flex-col">
-            <div className="border-b-2 border-purple-900/50 bg-[#0f0f10]">
-              <div className="p-3 bg-gradient-to-r from-purple-900/60 via-purple-900/40 to-transparent text-[11px] font-bold text-purple-300 uppercase tracking-wider flex items-center gap-2">
-                ⌨Entrada do Programa
-              </div>
-              <div className="px-3 py-2 text-[10px] text-yellow-300 bg-yellow-900/10 border-b border-yellow-900/30">
-                Se seu programa pede entrada (Scanner.nextLine()), escreva aqui antes de clicar em RODAR (cada linha = uma entrada)
-              </div>
-              <textarea 
-                value={stdin}
-                onChange={(e) => setStdin(e.target.value)}
-                placeholder="Ex: Mirna&#10;25&#10;senha123"
-                className="w-full bg-[#1a1a1b] text-green-400 font-mono text-xs p-3 border-none focus:outline-none focus:ring-2 focus:ring-purple-600 resize-none"
-                style={{ minHeight: '70px', maxHeight: '100px' }}
-              />
-            </div>
-
             <div className="flex-1 flex flex-col">
               <div className="p-3 bg-gradient-to-r from-purple-900/40 via-purple-900/20 to-transparent text-[11px] font-bold text-purple-300 border-b-2 border-purple-900/50 uppercase tracking-wider flex items-center gap-2">
                 Saída do Programa
