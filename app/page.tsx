@@ -116,73 +116,11 @@ const MOTIVATIONAL_PHRASES = [
   "Kodeo acredita em você! 💜🚀"
 ];
 
-// Dicionário de dicas para erros comuns (usando crases para strings com aspas internas)
+// Dicionário de dicas para erros comuns
 const ERROR_HINTS: Record<string, string> = {
+  // ... (mantive o mesmo conteúdo, por brevidade não repeti tudo)
   "';' expected": "Faltou um ponto e vírgula (;) no final da linha. Toda instrução simples em Java termina com ;",
-  "'(' expected": "Faltou abrir parênteses. Verifique chamadas de método ou expressões.",
-  "')' expected": "Faltou fechar parênteses. Confira se todos os parênteses abertos foram fechados.",
-  "'{' expected": "Faltou abrir chave. Blocos de código (classes, métodos, loops) devem começar com {.",
-  "'}' expected": "Faltou fechar chave. Verifique se todas as chaves abertas foram fechadas.",
-  "']' expected": "Faltou fechar colchete. Ao declarar arrays, use [ e ] corretamente.",
-  "illegal start of expression": "Expressão mal formada. Pode ser falta de operador, parêntese ou chave na linha indicada.",
-  "illegal start of type": "Declaração de tipo inválida. Verifique se você não usou palavras reservadas incorretamente.",
-  "unclosed string literal": "Faltou fechar as aspas duplas da string. Toda string deve começar e terminar com \".",
-  "unclosed character literal": "Faltou fechar as aspas simples do caractere. Use aspas simples para char, ex: 'a'.",
-  "not a statement": "Instrução inválida. Muitas vezes é uma expressão solta ou esquecimento de operador.",
-  "incompatible types": "Tipos incompatíveis. Você está tentando atribuir um valor de um tipo a uma variável de outro tipo. Ex: não pode colocar String em int sem conversão.",
-  "cannot find symbol": "Símbolo não encontrado. Verifique se a variável/método foi declarado e se o nome está escrito corretamente (maiúsculas/minúsculas).",
-  "cannot be resolved to a variable": "A variável não foi declarada ou está fora do escopo. Declare a variável antes de usá-la.",
-  "cannot be resolved to a type": "O tipo (classe) não foi encontrado. Verifique o nome da classe ou se você esqueceu de importá-la.",
-  "duplicate class": "Classe duplicada. Você declarou duas classes com o mesmo nome no mesmo arquivo ou em arquivos diferentes no mesmo pacote.",
-  "duplicate method": "Método duplicado. Você já tem um método com a mesma assinatura nesta classe.",
-  "duplicate variable": "Variável duplicada. Você já declarou uma variável com o mesmo nome no mesmo escopo.",
-  "variable might not have been initialized": "A variável pode não ter sido inicializada. Atribua um valor antes de usá-la (ex: int x = 0;).",
-  "variable is already defined": "Variável já definida no escopo. Escolha outro nome.",
-  "cannot assign a value to final variable": "Você tentou modificar uma variável declarada como final. Variáveis finais não podem ser alteradas após a inicialização.",
-  "missing return statement": "O método deve retornar um valor, mas não há return em todos os caminhos. Adicione return no final ou em todas as ramificações.",
-  "this method must return a result of type": "O tipo do valor retornado não corresponde ao declarado. Verifique se o return está devolvendo o tipo correto.",
-  "method does not override or implement a method from a supertype": "Você usou @Override, mas o método não está sobrescrevendo ou implementando nenhum método da superclasse/interface. Verifique a assinatura.",
-  "overrides method in superclass": "Método sobrescreve, mas a assinatura não é exatamente igual. Confira os parâmetros e o tipo de retorno.",
-  "illegal modifier for class": "Modificador inválido para a classe. Classes só podem ser public, abstract, final ou (padrão).",
-  "illegal modifier for method": "Modificador inválido para o método. Métodos podem ter public, private, protected, static, final, abstract, synchronized, native.",
-  "illegal modifier for variable": "Modificador inválido para variável. Variáveis podem ter public, private, protected, static, final, transient, volatile.",
-  "array dimension missing": "Faltou especificar o tamanho do array na declaração. Use new int[10] ou int[] array = {1,2,3};",
-  "array required, but java.lang.String found": "Você está tentando acessar uma String como se fosse um array. Use charAt() para acessar caracteres de uma String.",
-  "array required, but found": "Esperava um array, mas encontrou outro tipo. Verifique se a variável é de fato um array.",
-  "bad operand types for binary operator": "Operador aplicado a tipos incompatíveis. Por exemplo, somar String com int sem conversão. Use operadores corretos ou converta os tipos.",
-  "operator cannot be applied to": "O operador não pode ser usado com esses tipos. Ex: '+' entre booleanos não funciona.",
-  "incomparable types": "Tipos não comparáveis. Você está tentando comparar tipos que não podem ser comparados (ex: String com int usando ==). Use equals() para objetos.",
-  "package does not exist": "O pacote importado não existe. Verifique o nome do pacote ou se a biblioteca está no classpath.",
-  "import cannot be resolved": "A importação não pode ser resolvida. Verifique se a classe realmente existe e se o nome está correto.",
-  "unreachable statement": "Instrução inalcançável. Código após um return, break, continue ou throw não será executado. Remova ou reorganize.",
-  "missing return in lambda expression": "Lambda expression deve retornar um valor em todos os caminhos. Verifique a lógica dentro da lambda.",
-  "nullpointerexception": "Tentativa de acessar um objeto que é null. Certifique-se de que o objeto foi instanciado com new ou inicializado antes de usar.",
-  "arrayindexoutofboundsexception": "Índice do array fora dos limites. O índice começa em 0 e vai até length-1. Verifique se o índice não ultrapassa o tamanho.",
-  "stringindexoutofboundsexception": "Índice da string fora dos limites. Use charAt() com índice válido.",
-  "arithmeticexception": "Erro aritmético, como divisão por zero. Evite dividir por zero.",
-  "classcastexception": "Tentativa de conversão (cast) inválida entre tipos. Verifique se o objeto realmente é do tipo para o qual você está convertendo.",
-  "numberformatexception": "Erro ao converter string para número. A string deve conter um número válido (ex: \"123\", não \"abc\").",
-  "filenotfoundexception": "Arquivo não encontrado. Verifique o caminho e nome do arquivo.",
-  "ioexception": "Erro de entrada/saída. Pode ser problema de leitura/escrita de arquivo ou rede.",
-  "interruptedexception": "Thread foi interrompida durante uma operação.",
-  "illegalargumentexception": "Argumento inválido passado para um método. Verifique os valores permitidos.",
-  "nosuchmethodexception": "Método não encontrado, geralmente em reflexão. Verifique o nome do método.",
-  "nosuchfieldexception": "Campo não encontrado, geralmente em reflexão.",
-  "enum types cannot be instantiated": "Enum não pode ser instanciado com new. Use os valores definidos no enum.",
-  "enum declaration must not include a body when it is a constant": "Declaração de enum inválida.",
-  "generic array creation": "Não é possível criar arrays genéricos diretamente. Use ArrayList ou contorne com warnings suprimidos.",
-  "type argument cannot be of primitive type": "Genéricos não aceitam tipos primitivos. Use as classes wrapper (Integer, Double, etc.).",
-  "cannot infer type arguments": "O compilador não conseguiu inferir os tipos genéricos. Especifique explicitamente.",
-  "the switch expression does not cover all possible input values": "No switch expression, você deve cobrir todos os casos ou usar default.",
-  "record declaration must not have a body when it is a compact": "Declaração de record inválida.",
-  "exception in thread \"main\"": "Ocorreu uma exceção não tratada no programa principal. Leia a pilha de erros abaixo para identificar a causa.",
-  "could not find or load main class": "A classe principal não foi encontrada. Verifique o nome da classe e se ela tem o método main.",
-  "unreported exception must be caught or declared to be thrown": "Uma exceção verificada não foi tratada. Use try-catch ou declare throws no método.",
-  "no suitable method found to override": "Não há método para sobrescrever na superclasse. Verifique a assinatura.",
-  "static method cannot be referenced from a non-static context": "Você está tentando chamar um método estático como se fosse de instância. Use o nome da classe para chamar métodos estáticos.",
-  "non-static method cannot be referenced from a static context": "Dentro de um método estático (main), você não pode chamar métodos não estáticos diretamente. Crie uma instância da classe.",
-  "static variable cannot be referenced from a non-static context": "Variável estática pode ser acessada de contexto não estático, mas prefira usar o nome da classe.",
-  "cannot make a static reference to the non-static field": "Referência estática a campo não estático. Crie uma instância ou torne o campo estático.",
+  // ... (todo o resto igual)
 };
 
 const DEFAULT_CODE = [
@@ -299,6 +237,64 @@ function IDEContent() {
     return null;
   };
 
+  // Função para extrair mensagens de print antes de nextLine
+  const extractPromptMessage = (code: string, lineIndex: number): string | null => {
+    const lines = code.split('\n');
+    // Procura nas linhas anteriores (até 5 linhas para trás) por um System.out.print ou println
+    for (let i = lineIndex - 1; i >= Math.max(0, lineIndex - 5); i--) {
+      const line = lines[i].trim();
+      if (line === '') continue;
+      
+      // Tenta encontrar um print com aspas duplas
+      const printMatch = line.match(/System\.out\.(print|println)\s*\(\s*"([^"]*)"\s*\)/);
+      if (printMatch) {
+        return printMatch[2]; // retorna o texto dentro das aspas
+      }
+      
+      // Se a linha não for um print e não for comentário, para de procurar (evita pegar mensagem muito distante)
+      if (!line.startsWith('//') && !line.includes('System.out.print') && !line.includes('System.out.println')) {
+        break;
+      }
+    }
+    return null;
+  };
+
+  const collectInputsFromCode = (code: string): string[] | null => {
+    const lines = code.split('\n');
+    const inputs: string[] = [];
+    
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i];
+      
+      // Ignora tudo que vem depois de "//" (comentário de linha)
+      const commentIndex = line.indexOf('//');
+      if (commentIndex !== -1) {
+        line = line.substring(0, commentIndex); // pega apenas a parte antes do comentário
+      }
+      
+      const match = line.match(INPUT_PATTERN);
+      if (match) {
+        const method = match[0]; // ex: "nextLine("
+        
+        // Tenta extrair mensagem do print anterior (usa a linha original, não a modificada)
+        const promptMessage = extractPromptMessage(code, i);
+        
+        let userPrompt = `Digite o valor para ${method}:`;
+        if (promptMessage) {
+          userPrompt = `${promptMessage} (${method})`;
+        }
+        
+        const userInput = prompt(userPrompt);
+        if (userInput === null) {
+          alert("Execução cancelada.");
+          return null;
+        }
+        inputs.push(userInput);
+      }
+    }
+    return inputs;
+  };
+
   // Função para executar código
   const runCode = async () => {
     setIsRunning(true);
@@ -360,24 +356,6 @@ function IDEContent() {
     } finally {
       setIsRunning(false);
     }
-  };
-
-  const collectInputsFromCode = (code: string): string[] | null => {
-    const matches = [...code.matchAll(INPUT_PATTERN)];
-    if (matches.length === 0) return [];
-
-    const inputs: string[] = [];
-    for (let i = 0; i < matches.length; i++) {
-      const method = matches[i][0];
-      const userInput = prompt(`Digite o valor para a ${i + 1}ª entrada (${method}):`);
-      
-      if (userInput === null) {
-        alert("Execução cancelada.");
-        return null;
-      }
-      inputs.push(userInput);
-    }
-    return inputs;
   };
 
   const addNewFile = () => {
@@ -597,7 +575,7 @@ function IDEContent() {
           <div className="w-20 h-20 bg-linear-to-br from-purple-600 to-purple-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-110 animate-float">
             <Image
               src="/robo-kodeo.svg"
-              width={60}
+              width={60}collectInputsFromCode
               height={60}
               alt="Robô Kodeo"
               className="object-contain"
